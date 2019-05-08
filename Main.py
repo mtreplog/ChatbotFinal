@@ -229,7 +229,7 @@ def index2():
     payload['CostCenter']['DeliveryUnit']['DU'] = del_unit
     payload['CostCenter']['DeliveryUnit']['OrganizationalUnit']['Node'] = NodeDict[Org_unit]
     payload['CostGroup']['CostGroup'] = CostType
-    payload['CostCenter']['CCID'] = z[CCname]
+    payload['CostCenter']['CCID'] = CCDict[CCname]
     payload['CostCenter']['Name'] = CCname
     payload['CostType']['CostType'] = CostGroup
     post = requests.post(

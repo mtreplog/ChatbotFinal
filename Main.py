@@ -4,18 +4,53 @@ import requests
 import math
 import os
 
-
 app = Flask(__name__)
 port = int(os.getenv("PORT"))
 Org_unit = ''
 cost = 0
 del_unit = ''
-Node = ''
-CClist = ''
-CCDict = {}
-Travel = 0
-ICO = 0
-ThirdParty = 0
+CCDict = {'IT S/4 Hana PO SE': '101004059',
+          'IT S/4 HANA PO FRAN': '105410111', 'IT S/4 Hana PO US': '108004032', 'IT AppServ Mgmt SE': '101030073', 'IT AppServ Mgmt US': '108004071', 'IT HR I SE': '101004080', 'IT HR I FR': '105410113', 'IT HR I US': '108004051', 'IT HR I ARG': '161004073', 'IT HR I MEX': '135004021', 'IT HR II SE': '101035010', 'IT HR II SGD': '115000402', 'Cross IT & Ops Mg US': '108004036', 'Cross IT & Ops Mg SE': '101035101', 'IT Ops & SharServ US': '108611700', 'IT O &SS CAN': '109004102', 'IT Ops & SharServ SE': '101000432', 'IT Op & ShServ SGD': '115004535', 'IT I&DM CAN': '109420400', 'IT IAM SE': '101000452', 'SharIT App SE': '101035103', 'SharIT App IND': '176223020', 'IT Core Finance SE': '101000348', 'IT Controlling SE': '101004002', 'IT Corp Fin Mgmt SE': '101030010', 'IT Procurement SE': '101035030', 'IT Compliance FR': '10500616', 'IT Core Finance US': '108000402', 'IT Controlling US': '108061152', 'IT Procurement US': '108611541', 'IT Procurement SGD': '115000330', 'IT Controlling SGD', '115004913', 'IT Core Finance SGD': '115800024', 'IT Procurement IND': '176074148', 'IT Core Finance ROM': '181000170', 'IT Controlling ROM': '181010088', 'IT Compliance DUB': '700092330'}
+NodeDict = {'IT Human Resources': 'M3CIT03009', 'IT S/4 HANA Program Office': 'M3CIT04054', 'IT Application Services Mgmt': 'M3ITIN0206', 'Cross IT & Operations': 'M3CIT03003', 'IT Corporate Finance': 'M2CIT00302',
+            'IT Go-to-Market Services': 'M2CIT00312', 'IT Contract to Revenue': 'M3CIT03008', 'IT Application Architecture': 'M3ITIN0214', 'IT Services, Entitlement & Delivery': 'M3CIT03010', 'IT Core Value Chain Services Mgmt': 'M2CIT00305'}
+S4HANACC = ['IT S/4 Hana PO SE', 'IT S/4 HANA PO FRAN', 'IT S/4 Hana PO SE', 'IT S/4 HANA PO US']
+ITAPPSERV = ['IT AppServ Mgmt SE', 'IT AppServ Mgmt US']
+HRI = ['IT HR I SE', 'IT HR I FR', 'IT HR I US', 'IT HR I ARG', 'IT HR I MEX']
+HRII = ['IT HR II SE', 'IT HR II SGD']
+CrossIT = ['Cross IT & Ops Mg US', 'Cross IT & Ops Mg SE']
+OpsShared = ['IT Ops & SharServ US', 'IT O & SS CAN', 'IT Ops & SharServ SE']
+IAM = ['IT I&DM CAN', 'IT IAM SE']
+SharedIT = ['SharIT App SE', 'SharIT App IND']
+CoreFinance = ['IT Core Finance SE', 'IT Core Finance US',
+               'IT Core Finance ROM', 'IT Core Finance SGD']
+Controlling = ['IT Controlling SE', 'IT Controlling US', 'IT Controlling SGD', 'IT Controlling ROM']
+Procurement = ['IT Procurement SE', 'IT Procurement US', 'IT Procurement SGD', 'IT Procurement IND']
+CorporateFin = ['IT Corp Fin Mgmt SE']
+GTMManagement = ['IT GTM Serv Mgmt US', 'IT GTM Serv Mgmt SE',
+                 'IT GTM Serv Mgmt SGP', 'IT GTM Serv Mgmt IND']
+Marketing = ['101035106', '109463005', '108404039', '101034801', '101040258']
+FranchiseApp = ['IT Sales Fran Ap SE', 'IT Sales Fran Ap SGD']
+PartnerManagement = ['IT PMgt CAN', 'IT PMgt FRAN', 'Core Processes - SGD']
+SalesII = ['IT Sales II SGD', 'IT Gtm ServSal II US']
+SalesI = ['IT GTM ServSal I SE', 'IT GTM ServSal I ROM', 'IT GTM ServSal I ROM', 'IT Sales I SGD',
+          'IT GTM SerSal I SMAT', 'IT DES - Sal I SMAT', 'IT GTM ServSal I US', 'IT DES - Sale I DUB', 'IT SolCent IND']
+SolutionCenter = ['IT SolCent IND']
+C2RMgmtUS = ['IT Field Fin Mgmt US']
+C2RMgmtSE = ['IT Field Fin Mgmt SE']
+CtRI = ['IT Field Fin I SE', 'IT Field Fin I SGD', 'IT Rev Acc SGD']
+CtRII = ['IT Field Fin II ROM', 'Core Processes - GY']
+IND = ['Field Finance IT IND', 'IT Field Fin I IND']
+RevenueAcounting = ['IT Rev Acc SE', 'IT Rev Acc US']
+US = ['IT Field Loc US']
+ITAppArchit = ['IT Appl Arch SE', 'IT Appl Arch US', 'IT Appl Arch CAN']
+Entitlement = ['AS i E&F Mgmt ROM', 'IT Ent & Ful Mgmt SE']
+ServiceDelivery = ['IT Serv EngDel SE', 'IT Serv Del US',
+                   'IT Serv Del Old SE', 'IT Serv EngDel US', 'IT Serv EngDel SGD']
+ITCoreValueChain = ['IT SVC Svc Mgmt SE']
+DU_dict = ['1GtM Management', '1Marketing', '1Franchise Apps', '1Partner Management', '1Sales II', '1Sales I', '1Solution Center',
+           '2C2R Mgmt. US', '2C2R Mgmt. SE', '2CtRI', '2CtRII', '2IND', '2Revenue Acounting', '2US', '3IT Application Architecture', '4Entitlement & Fullfillment Mgmt', '4Services Delivery', '5CVCS Mgmt', '6IT S/4 HANA Program Office', '7IT Application Services Mgmt', '8HR I', '8HR II', '9Cross IT & Operations Management', '9Operations & Shared Service', '9Identity & Accessmanagement', '9Shared IT Applications', 'zCore Finance', 'zControlling', 'zCorporate Finance Mgmt', 'zProcurement']
+Compliance = ['IT Compliance FR', 'IT Compliance DUB']
+CCDict = {'IT GtM Serv Mgmt US': '108001010', 'IT GtM Serv Mgmt SE': '101000378'}
 
 
 @app.route('/mike', methods=['POST'])
@@ -113,8 +148,6 @@ def index2():
     global cost
     global Org_unit
     global del_unit
-    global CCDict
-    global Node
     date = data['conversation']['memory']['date']['value'].lower()
     CostType = data['conversation']['memory']['cost_group']['raw']
     userid = data['conversation']['memory']['userid']['value']
@@ -122,6 +155,7 @@ def index2():
     CCname = data['conversation']['memory']['costcenter']['raw']
     headers = {'content-type': 'application/json'}
     CostGroup = data['conversation']['memory']['cost_type']['raw']
+
     payload = {
         "Jan": 0,
         "JanCom": "string",
@@ -193,9 +227,9 @@ def index2():
     payload['Resource']['Name'] = name.title()
     payload['Resource']['UserID'] = userid.title()
     payload['CostCenter']['DeliveryUnit']['DU'] = del_unit
-    payload['CostCenter']['DeliveryUnit']['OrganizationalUnit']['Node'] = Node
+    payload['CostCenter']['DeliveryUnit']['OrganizationalUnit']['Node'] = NodeDict[Org_unit]
     payload['CostGroup']['CostGroup'] = CostType
-    payload['CostCenter']['CCID'] = CCDict[CCname]
+    payload['CostCenter']['CCID'] = z[CCname]
     payload['CostCenter']['Name'] = CCname
     payload['CostType']['CostType'] = CostGroup
     post = requests.post(
@@ -215,34 +249,37 @@ def index2():
 @app.route('/DU', methods=['POST'])
 def DU():
     placeholder = ""
-    count = 0
     Org_list = []
     global Org_unit
     global cost
     data = (json.loads(request.get_data()))
-    global Node
+
     Org_unit = str(data['conversation']['memory']['org_unit']['raw'])
     cost = int(data['conversation']['memory']['money']['amount'])
+    if Org_unit == 'IT Go-to-Market Services':
+        placeholder = '1'
+    elif Org_unit == 'IT Contract to Revenue':
+        placeholder = '2'
+    elif Org_unit == 'IT Application Architecture':
+        placeholder = '3'
+    elif Org_unit == 'IT Services, Entitlement & Delivery':
+        placeholder = '4'
+    elif Org_unit == 'IT Core Value Chain Services Mgmt':
+        placeholder = '5'
+    elif Org_unit == 'IT S/4 HANA Program Office':
+        placeholder = '6'
+    elif Org_unit == 'IT Application Services Mgmt':
+        placeholder = '7'
+    elif Org_unit == 'IT Human Resources':
+        placeholder = '8'
+    elif Org_unit == 'Cross IT & Operations':
+        placeholder = '9'
+    elif Org_unit == 'IT Corporate Finance':
+        placeholder = 'z'
 
-    actuals = requests.get(
-        'https://cost-center-management-production2.cfapps.eu10.hana.ondemand.com/rest/restactuals/v1/GetActuals')
-    final = json.loads(actuals.text)
-
-    for i in final:
-        try:
-
-            if i['CostCenter']['DeliveryUnit']['OrganizationalUnit']['OU'] == Org_unit:
-                Node = i['CostCenter']['DeliveryUnit']['OrganizationalUnit']['Node']
-                for key in Org_list:
-                    if i['CostCenter']['DeliveryUnit']['DU'] == key:
-                        count += 1
-                if count == 0:
-                    Org_list.append(i['CostCenter']['DeliveryUnit']['DU'])
-
-            count = 0
-        except KeyError:
-            pass
-
+    for i in DU_dict:
+        if i[0] == placeholder:
+            Org_list.append(i[1:])
     buttonname = []
     for k in Org_list:
         if len(k) > 20:
@@ -395,34 +432,36 @@ def DU():
 
 @app.route('/DU1', methods=['POST'])
 def DU1():
-    Actuallist = []
-    global ThirdParty
-    global Travel
-    global ICO
     placeholder = ""
     Org_list = []
-    count = 0
     data = (json.loads(request.get_data()))
 
     Org_unit = str(data['conversation']['memory']['org_unit']['raw'])
 
-    actuals = requests.get(
-        'https://cost-center-management-production2.cfapps.eu10.hana.ondemand.com/rest/restactuals/v1/GetActuals')
-    final = json.loads(actuals.text)
+    if Org_unit == 'IT Go-to-Market Services':
+        placeholder = '1'
+    elif Org_unit == 'IT Contract to Revenue':
+        placeholder = '2'
+    elif Org_unit == 'IT Application Architecture':
+        placeholder = '3'
+    elif Org_unit == 'IT Services Entitlement & Delivery':
+        placeholder = '4'
+    elif Org_unit == 'IT Core Value Chain Services Mgmt':
+        placeholder = '5'
+    elif Org_unit == 'IT S/4 HANA Program Office':
+        placeholder = '6'
+    elif Org_unit == 'IT Application Services Mgmt':
+        placeholder = '7'
+    elif Org_unit == 'IT Human Resources':
+        placeholder = '8'
+    elif Org_unit == 'Cross IT & Operations':
+        placeholder = '9'
+    elif Org_unit == 'IT Corporate Finance':
+        placeholder = 'z'
 
-    for i in final:
-        try:
-            if i['CostCenter']['DeliveryUnit']['OrganizationalUnit']['OU'] == Org_unit:
-                for key in Org_list:
-                    if i['CostCenter']['DeliveryUnit']['DU'] == key:
-                        count += 1
-                if count == 0:
-                    Org_list.append(i['CostCenter']['DeliveryUnit']['DU'])
-
-            count = 0
-        except KeyError:
-            pass
-
+    for i in DU_dict:
+        if i[0] == placeholder:
+            Org_list.append(i[1:])
     buttonname = []
     for k in Org_list:
         if len(k) > 20:
@@ -577,30 +616,71 @@ def DU1():
 def costcenter():
     CClist = []
     buttonname = []
-    global CCDict
     global del_unit
     data = (json.loads(request.get_data()))
     del_unit = str(data['conversation']['memory']['deliveryunit']['raw'])
-
-    count = 0
-
-    actuals = requests.get(
-        'https://cost-center-management-production2.cfapps.eu10.hana.ondemand.com/rest/restactuals/v1/GetActuals')
-    final = json.loads(actuals.text)
-
-    for i in final:
-        try:
-            if i['CostCenter']['DeliveryUnit']['DU'] == del_unit:
-                for key in CClist:
-                    if i['CostCenter']['Name'] == key:
-                        count += 1
-                if count == 0:
-                    CClist.append(i['CostCenter']['Name'])
-                    CCDict[(i['CostCenter']['Name'])] = (i['CostCenter']['CCID'])
-
-            count = 0
-        except KeyError:
-            pass
+    if del_unit == 'IT S/4 HANA Program Office':
+        CClist = S4HANACC
+    elif del_unit == 'IT Application Services Mgmt':
+        CClist = ITAPPSERV
+    elif del_unit == 'HR I':
+        CClist = HRI
+    elif del_unit == 'HR II':
+        CClist = HRII
+    elif del_unit == 'Cross IT & Operations Management':
+        CClist = CrossIT
+    elif del_unit == 'Operations & Shared Service':
+        CClist = OpsShared
+    elif del_unit == 'Identity & Accessmanagement':
+        CClist = IAM
+    elif del_unit == 'Shared IT Applications':
+        CClist = SharedIT
+    elif del_unit == 'Core Finance':
+        CClist = CoreFinance
+    elif del_unit == 'Controlling':
+        CClist = Controlling
+    elif del_unit == 'Corporate Finance Mgmt':
+        CClist = CorporateFin
+    elif del_unit == 'Procurement':
+        CClist = Procurement
+    elif del_unit == 'Compliance':
+        CClist = Compliance
+    elif del_unit == 'GtM Management':
+        CClist = GTMManagement
+    elif del_unit == 'Marketing':
+        CClist = Marketing
+    elif del_unit == 'Franchise Apps':
+        CClist = FranchiseApp
+    elif del_unit == 'Partner Management':
+        CClist = PartnerManagement
+    elif del_unit == 'Sales II':
+        CClist = SalesII
+    elif del_unit == 'Sales I':
+        CClist = SalesI
+    elif del_unit == 'Solution Center':
+        CClist = SolutionCenter
+    elif del_unit == 'C2R Mgmt. US':
+        CClist = C2RMgmtUS
+    elif del_unit == 'C2R Mgmt. SE':
+        CClist = C2RMgmtSE
+    elif del_unit == 'CtRI':
+        CClist = CtRI
+    elif del_unit == 'CtRII':
+        CClist = CtRII
+    elif del_unit == 'IND':
+        CClist = IND
+    elif del_unit == 'Revenue Acounting':
+        CClist = RevenueAcounting
+    elif del_unit == 'US':
+        CClist = US
+    elif del_unit == 'IT Application Architecture':
+        CClist = ITAppArchit
+    elif del_unit == 'Entitlement & Fullfillment Mgmt':
+        CClist = Entitlement
+    elif del_unit == 'Services Delivery':
+        CClist = ServiceDelivery
+    elif del_unit == 'CVCS Mgmt':
+        CClist = ITCoreValueChain
 
     for q in CClist:
         if len(q) > 20:

@@ -2,10 +2,9 @@ from flask import Flask, request, jsonify
 import json
 import requests
 import math
-import os
 
 app = Flask(__name__)
-port = int(os.getenv("PORT"))
+port = '5000'
 Org_unit = ''
 cost = 0
 del_unit = ''
@@ -18,7 +17,7 @@ ITAPPSERV = ['IT AppServ Mgmt SE', 'IT AppServ Mgmt US']
 HRI = ['IT HR I SE', 'IT HR I FR', 'IT HR I US', 'IT HR I ARG', 'IT HR I MEX']
 HRII = ['IT HR II SE', 'IT HR II SGD']
 CrossIT = ['Cross IT & Ops Mg US', 'Cross IT & Ops Mg SE']
-OpsShared = ['IT Ops & SharServ US', 'IT O & SS CAN', 'IT Ops & SharServ SE']
+OpsShared = ['IT Ops & SharServ US', 'IT O &SS CAN', 'IT Ops & SharServ SE', 'IT Op & ShServ SGD']
 IAM = ['IT I&DM CAN', 'IT IAM SE']
 SharedIT = ['SharIT App SE', 'SharIT App IND']
 CoreFinance = ['IT Core Finance SE', 'IT Core Finance US',
@@ -26,24 +25,24 @@ CoreFinance = ['IT Core Finance SE', 'IT Core Finance US',
 Controlling = ['IT Controlling SE', 'IT Controlling US', 'IT Controlling SGD', 'IT Controlling ROM']
 Procurement = ['IT Procurement SE', 'IT Procurement US', 'IT Procurement SGD', 'IT Procurement IND']
 CorporateFin = ['IT Corp Fin Mgmt SE']
-GTMManagement = ['IT GTM Serv Mgmt US', 'IT GTM Serv Mgmt SE',
-                 'IT GTM Serv Mgmt SGP', 'IT GTM Serv Mgmt IND']
-Marketing = ['101035106', '109463005', '108404039', '101034801', '101040258']
+GTMManagement = ['IT GtM Serv Mgmt US', 'IT GtM Serv Mgmt SE',
+                 'IT GtM Serv Mgmt SGP', 'IT GtM Serv Mgmt IND']
+Marketing = ['IT Marketing CAN', 'IT Marketing US', 'IT Marketing SE']
 FranchiseApp = ['IT Sales Fran Ap SE', 'IT Sales Fran Ap SGD']
 PartnerManagement = ['IT PMgt CAN', 'IT PMgt FRAN', 'Core Processes - SGD']
-SalesII = ['IT Sales II SGD', 'IT Gtm ServSal II US']
-SalesI = ['IT GTM ServSal I SE', 'IT GTM ServSal I ROM', 'IT GTM ServSal I ROM', 'IT Sales I SGD',
-          'IT GTM SerSal I SMAT', 'IT DES - Sal I SMAT', 'IT GTM ServSal I US', 'IT DES - Sale I DUB', 'IT SolCent IND']
+SalesII = ['IT Sales II SGD', 'IT GtM ServSal II US']
+SalesI = ['IT GtM ServSal I SE', 'IT GtM ServSal I ROM', 'IT GtM ServSal I ROM', 'IT Sales I SGD',
+          'IT GtM SerSal I SMAT', 'IT DES - Sal I SMAT', 'IT GtM ServSal I US', 'IT DES - Sale I DUB', 'IT SolCent IND']
 SolutionCenter = ['IT SolCent IND']
 C2RMgmtUS = ['IT Field Fin Mgmt US']
 C2RMgmtSE = ['IT Field Fin Mgmt SE']
-CtRI = ['IT Field Fin I SE', 'IT Field Fin I SGD', 'IT Rev Acc SGD']
+CtRI = ['IT Field Fin I SE', 'IT Field Fin I SGD', 'IT Rev Acc SGD', 'IT Field Fin I ROM']
 CtRII = ['IT Field Fin II ROM', 'Core Processes - GY']
 IND = ['Field Finance IT IND', 'IT Field Fin I IND']
 RevenueAcounting = ['IT Rev Acc SE', 'IT Rev Acc US']
 US = ['IT Field Loc US']
 ITAppArchit = ['IT Appl Arch SE', 'IT Appl Arch US', 'IT Appl Arch CAN']
-Entitlement = ['AS i E&F Mgmt ROM', 'IT Ent & Ful Mgmt SE']
+Entitlement = ['AS - E&F Mgmt ROM', 'IT Ent & Ful Mgmt SE']
 ServiceDelivery = ['IT Serv EngDel SE', 'IT Serv Del US',
                    'IT Serv Del Old SE', 'IT Serv EngDel US', 'IT Serv EngDel SGD']
 ITCoreValueChain = ['IT SVC Svc Mgmt SE']
@@ -836,4 +835,4 @@ def errors():
     return jsonify(status=200)
 
 
-app.run(host='0.0.0.0', port=port)
+app.run(port=port)

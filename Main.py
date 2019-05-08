@@ -2,9 +2,10 @@ from flask import Flask, request, jsonify
 import json
 import requests
 import math
+import os
 
 app = Flask(__name__)
-port = '5000'
+port = int(os.getenv("PORT"))
 Org_unit = ''
 cost = 0
 del_unit = ''
@@ -835,4 +836,4 @@ def errors():
     return jsonify(status=200)
 
 
-app.run(port=port)
+app.run(host='0.0.0.0', port=port)

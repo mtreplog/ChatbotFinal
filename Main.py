@@ -254,7 +254,7 @@ def DU():
     data = (json.loads(request.get_data()))
 
     Org_unit = str(data['conversation']['memory']['org_unit']['raw'])
-    cost = int(data['conversation']['memory']['money']['amount'])
+    cost = int(data['conversation']['memory']['number']['scalar'])
     if Org_unit == 'IT Go-to-Market Services':
         placeholder = '1'
     elif Org_unit == 'IT Contract to Revenue':
